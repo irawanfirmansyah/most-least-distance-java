@@ -39,7 +39,7 @@ class Solution {
   }
 
   public static String createKey(int sx, int sy, int tx, int ty) {
-    return "(" + sx + ", " + sy + ") -> " + "(" + tx + ", " + ty + ")";
+    return sx + "," + sy + " -> " + tx + "," + ty;
   }
 
   public static void main(String[] args) throws FileNotFoundException {
@@ -124,14 +124,19 @@ class Solution {
 
               int nextx = curr.x + directions[ii][0];
               int nexty = curr.y + directions[ii][1];
+              if (nextx < 0 || nextx >= map.length
+                  || nexty < 0 || nexty >= map.length) {
+                continue;
+              }
+              if (map[nextx][nexty] != '1') {
+                continue;
+              }
               if (nextx == targetx && nexty == targety) {
-
                 mapRes.put(key, curr.count + 1);
                 found = true;
                 break;
               }
-              if (nextx >= 0 && nextx < map.length
-                  && nexty >= 0 && nexty < map.length && map[nextx][nexty] == '1') {
+              if (map[nextx][nexty] == '1') {
                 if (!visited[nextx][nexty]) {
                   Point np = new Point();
                   np.count = curr.count + 1;
@@ -149,12 +154,49 @@ class Solution {
         }
       }
 
+      Map<String, Map<String, Integer>> group = new HashMap<String, Map<String, Integer>>();
+
       for (Map.Entry<String, Integer> entry : mapRes.entrySet()) {
+
+        String[] sk = entry.getKey().split(" -> ");
+        String sp = sk[0];
+        String tp = sk[1];
+        if (group.containsKey(sp)) {
+          group.get(sp).put(tp, entry.getValue());
+        } else {
+          Map<String, Integer> tem = new HashMap<String, Integer>();
+          tem.put(tp, entry.getValue());
+          group.put(sp, tem);
+        }
+
         System.out.println("Key = " + entry.getKey() +
             ", Value = " + entry.getValue());
       }
 
-      System.out.println(mapRes);
+      int smallest = 0;
+      String smallestLoc = "";
+      for (Map.Entry<String, Map<String, Integer>> entry : group.entrySet()) {
+        int max = 0;
+        for (Map.Entry<String, Integer> ent : entry.getValue().entrySet()) {
+          if (max == 0) {
+            max = ent.getValue();
+          } else if (ent.getValue() > max) {
+            max = ent.getValue();
+          }
+        }
+
+        if (smallest == 0) {
+          smallest = max;
+          smallestLoc = entry.getKey();
+        } else if (max < smallest) {
+          smallest = max;
+          smallestLoc = entry.getKey();
+        }
+      }
+      System.out.println(smallest);
+      System.out.println(smallestLoc);
+
+      // System.out.println(mapRes);
     }
 
     sc.close();
