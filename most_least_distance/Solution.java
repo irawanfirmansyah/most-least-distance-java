@@ -8,7 +8,6 @@ class Solution {
 
   private static Set<String> targets;
   private static Queue<String> startingPoints;
-  private static Queue<Point> q = new PriorityQueue();
   private static int[][] directions = { { 0, 1 }, { 0, -1 }, { 1, 0 }, { -1, 0 }, };
 
   static int[] getPos(String loc, boolean ignoreDeduction) {
@@ -39,24 +38,6 @@ class Solution {
 
   }
 
-  static int bfs() {
-
-    /*
-     * add to queue
-     * count 0
-     * while q is not empty
-     * if top is target
-     * if bottom is target
-     * if left is target
-     * if right is target
-     * 
-     * iterate add next possible point to queue
-     */
-
-    return 1;
-
-  }
-
   public static String createKey(int sx, int sy, int tx, int ty) {
     return "(" + sx + ", " + sy + ") -> " + "(" + tx + ", " + ty + ")";
   }
@@ -81,11 +62,9 @@ class Solution {
 
       char[][] map = new char[size][size];
 
-      // Store target points
       Set<String> tmp = new HashSet<String>();
       for (int j = 0; j < totalCase; j++) {
         line = sc.nextLine();
-        // System.out.println(line);
         int[] positions = getPos(line.trim(), false);
         int x = positions[0];
         int y = positions[1];
@@ -98,8 +77,6 @@ class Solution {
         String[] rows = sc.nextLine().split(" ");
         for (int kk = 0; kk < size; kk++) {
           String cur = k + " " + kk;
-          // System.out.println("=== CURRENT ===");
-          // System.out.println(cur);
           char cha = rows[kk].charAt(0);
           if (!targets.contains(cur) && cha == '1') {
             temp.add(cur);
@@ -110,7 +87,7 @@ class Solution {
 
       startingPoints = temp;
 
-      Map<String, Integer> mapRes = new HashMap();
+      Map<String, Integer> mapRes = new HashMap<String, Integer>();
 
       while (!startingPoints.isEmpty()) {
         String strtLoc = startingPoints.remove();
@@ -125,25 +102,20 @@ class Solution {
         strPoint.x = startx;
         strPoint.y = starty;
 
-        // Test starting point with every targets
         for (String target : targets) {
-          // System.out.println(target);
           int[] targetLoc = getPos(target, true);
           int targetx = targetLoc[0];
           int targety = targetLoc[1];
-          // System.out.println(targetx + " " + targety);
 
           String key = createKey(startx, starty, targetx, targety);
-          // System.out.println(key);
 
-          Queue<Point> q = new PriorityQueue();
+          Queue<Point> q = new PriorityQueue<Point>();
           boolean[][] visited = new boolean[size][size];
           q.add(strPoint);
 
           boolean found = false;
           while (!q.isEmpty() && !found) {
             Point curr = q.remove();
-            System.out.println(curr.x + " " + curr.y + " " + curr.count);
             if (!visited[curr.x][curr.y]) {
               visited[curr.x][curr.y] = true;
             }
@@ -177,77 +149,14 @@ class Solution {
         }
       }
 
-      // while (!targets.isEmpty()) {
-      // String trgLoc = targets.remove();
-      // int[] trgPos = getPos(trgLoc, true);
-      // Point trg = new Point();
-      // trg.x = trgPos[0];
-      // trg.y = trgPos[1];
-
-      // while (!startingPoints.isEmpty()) {
-
-      // String strLoc = startingPoints.remove();
-      // System.out.println("=== STARTING POINT ===");
-      // System.out.println(strLoc);
-      // int[] strPos = getPos(strLoc, true);
-      // Point strPoint = new Point();
-      // strPoint.count = 0;
-      // strPoint.sx = strPos[0];
-      // strPoint.sy = strPos[1];
-      // strPoint.x = strPos[0];
-      // strPoint.y = strPos[1];
-
-      // Queue<Point> q = new PriorityQueue();
-      // boolean[][] visited = new boolean[size][size];
-      // q.add(strPoint);
-
-      // boolean found = false;
-      // while (!q.isEmpty() && !found) {
-      // Point curr = q.remove();
-      // if (!visited[curr.x][curr.y]) {
-      // visited[curr.x][curr.y] = true;
-      // }
-      // for (int ii = 0; ii < directions.length; ii++) {
-      // int nextX = curr.x + directions[ii][0];
-      // int nextY = curr.y + directions[ii][1];
-      // if (nextX == trg.x && nextY == trg.y) {
-      // String key = curr.sx + " " + curr.sy;
-      // if (mapRes.containsKey(key)) {
-      // mapRes.put(curr.sx + " " + curr.sy, mapRes.get(key) + 1);
-      // found = true;
-      // break;
-      // }
-      // }
-
-      // if (nextX >= 0 && nextX < map.length
-      // && nextY >= 0 && nextY < map.length) {
-
-      // if (!visited[nextX][nextY]) {
-      // Point np = new Point();
-      // np.count = curr.count + 1;
-      // np.x = nextX;
-      // np.y = nextY;
-      // np.sx = curr.sx;
-      // np.sy = curr.sy;
-      // q.add(np);
-      // }
-      // }
-
-      // }
-      // }
-
-      // }
-
-      // }
-
       for (Map.Entry<String, Integer> entry : mapRes.entrySet()) {
         System.out.println("Key = " + entry.getKey() +
             ", Value = " + entry.getValue());
       }
 
       System.out.println(mapRes);
-      // System.out.printf("#%d\n", tc);
     }
 
+    sc.close();
   }
 }
