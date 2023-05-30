@@ -33,7 +33,7 @@ class Solution {
 
     @Override
     public int compareTo(Point o) {
-      return Integer.compare(this.x + this.y, o.x + o.y);
+      return this.count - o.count;
     }
 
   }
@@ -47,25 +47,19 @@ class Solution {
 
     Scanner sc = new Scanner(fin);
 
-    int tc = sc.nextInt();
-
-    String line = sc.nextLine();
-
-    while (line.length() <= 0) {
-      line = sc.nextLine();
-    }
+    int tc = Integer.parseInt(sc.nextLine());
 
     for (int i = 0; i < tc; i++) {
+      String line = sc.nextLine();
+
       String[] inf = line.split(" ");
       int size = Integer.parseInt(inf[0]);
       int totalCase = Integer.parseInt(inf[1]);
 
-      char[][] map = new char[size][size];
-
       Set<String> tmp = new HashSet<String>();
       for (int j = 0; j < totalCase; j++) {
-        line = sc.nextLine();
-        int[] positions = getPos(line.trim(), false);
+        String strTc = sc.nextLine();
+        int[] positions = getPos(strTc.trim(), false);
         int x = positions[0];
         int y = positions[1];
         tmp.add(x + " " + y);
@@ -73,6 +67,8 @@ class Solution {
       targets = tmp;
 
       Queue<String> temp = new PriorityQueue<String>();
+      char[][] map = new char[size][size];
+
       for (int k = 0; k < size; k++) {
         String[] rows = sc.nextLine().split(" ");
         for (int kk = 0; kk < size; kk++) {
@@ -84,7 +80,6 @@ class Solution {
           map[k][kk] = rows[kk].charAt(0);
         }
       }
-
       startingPoints = temp;
 
       Map<String, Integer> mapRes = new HashMap<String, Integer>();
@@ -118,37 +113,39 @@ class Solution {
             Point curr = q.remove();
             if (!visited[curr.x][curr.y]) {
               visited[curr.x][curr.y] = true;
-            }
+              for (int ii = 0; ii < directions.length; ii++) {
 
-            for (int ii = 0; ii < directions.length; ii++) {
+                int nextx = curr.x + directions[ii][0];
+                int nexty = curr.y + directions[ii][1];
 
-              int nextx = curr.x + directions[ii][0];
-              int nexty = curr.y + directions[ii][1];
-              if (nextx < 0 || nextx >= map.length
-                  || nexty < 0 || nexty >= map.length) {
-                continue;
-              }
-              if (map[nextx][nexty] != '1') {
-                continue;
-              }
-              if (nextx == targetx && nexty == targety) {
-                mapRes.put(key, curr.count + 1);
-                found = true;
-                break;
-              }
-              if (map[nextx][nexty] == '1') {
-                if (!visited[nextx][nexty]) {
-                  Point np = new Point();
-                  np.count = curr.count + 1;
-                  np.x = nextx;
-                  np.y = nexty;
-                  np.sx = curr.sx;
-                  np.sy = curr.sy;
-                  q.add(np);
+                if (nextx < 0 || nextx >= map.length
+                    || nexty < 0 || nexty >= map.length)
+                  continue;
+
+                else if (map[nextx][nexty] != '1')
+                  continue;
+
+                else if (nextx == targetx && nexty == targety) {
+                  // Using this to debug
+                  // if (key.contains("2,3")) {
+
+                  //   System.out.println(key);
+                  //   System.out.println(curr.count + 1);
+                  // }
+                  mapRes.put(key, curr.count + 1);
+                  found = true;
+                  break;
                 }
+
+                Point np = new Point();
+                np.count = curr.count + 1;
+                np.x = nextx;
+                np.y = nexty;
+                np.sx = curr.sx;
+                np.sy = curr.sy;
+                q.add(np);
               }
             }
-
           }
 
         }
@@ -168,9 +165,6 @@ class Solution {
           tem.put(tp, entry.getValue());
           group.put(sp, tem);
         }
-
-        System.out.println("Key = " + entry.getKey() +
-            ", Value = " + entry.getValue());
       }
 
       int smallest = 0;
@@ -196,7 +190,6 @@ class Solution {
       System.out.println(smallest);
       System.out.println(smallestLoc);
 
-      // System.out.println(mapRes);
     }
 
     sc.close();
